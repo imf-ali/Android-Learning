@@ -15,10 +15,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.learning.mywishjlistapp.data.DummyWishList
@@ -33,19 +33,20 @@ fun HomeView(viewModel: WishViewModel, navController: NavController){
         modifier = Modifier.padding(all = 4.dp),
         contentColor = Color.White,
         backgroundColor = Color.Black,
-        onClick = { navController.navigate(Screen.AddScreen.route) }
+        onClick = { navController.navigate("${Screen.AddScreen.route}/0L") }
       ) {
         Icon(imageVector = Icons.Default.Add, contentDescription = "Add Wish list")
       }
     }
   ) {
+    val wishList = viewModel.getAllWishes.collectAsState(initial = listOf())
     LazyColumn(modifier = Modifier
       .fillMaxSize()
       .padding(it)){
-      items(DummyWishList.wishList){
-        item -> WishListItem(wishItem = item) {
-
-        }
+      items(wishList.value){
+        item -> WishListItem(wishItem = item, onClick = {
+          navController.navigate("${Screen.AddScreen.route}/${item.id}")
+        })
       }
     }
   }
